@@ -7,6 +7,7 @@ import LocationsCard from "./components/Cards/LocationsCard";
 import EpisodeCard from "./components/Cards/EpisodeCard";
 import Ionicons from "@expo/vector-icons/Ionicons";
 import { StatusBar } from "expo-status-bar";
+import Card from "./components/Cards/Card";
 
 const Tab = createBottomTabNavigator();
 
@@ -44,7 +45,7 @@ export default function App() {
               <GenericListScreen
                 endpoint="https://rickandmortyapi.com/api/character"
                 renderItem={({ item }: { item: Character }) => (
-                  <CharacterCard item={item} />
+                  <Card item={item} />
                 )}
               />
             )}
@@ -55,7 +56,7 @@ export default function App() {
               <GenericListScreen
                 endpoint="https://rickandmortyapi.com/api/location"
                 renderItem={({ item }: { item: Location }) => (
-                  <LocationsCard item={item} />
+                  <Card item={item} />
                 )}
               />
             )}
@@ -66,7 +67,7 @@ export default function App() {
               <GenericListScreen
                 endpoint="https://rickandmortyapi.com/api/episode"
                 renderItem={({ item }: { item: Episode }) => (
-                  <EpisodeCard item={item} />
+                  <Card item={item} />
                 )}
               />
             )}

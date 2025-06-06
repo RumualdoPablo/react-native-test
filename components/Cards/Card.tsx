@@ -1,11 +1,33 @@
 import { Image, Modal, Pressable, StyleSheet, Text, View } from "react-native";
-import React, { useState } from "react";
+import { useState } from "react";
 import ExtraInfo from "../ExtraInfo";
 
-const CharactedCard = ({ item }: { item: Character }) => {
+type CardProps = {
+  item: Character | Location | Episode;
+};
+
+const Card = ({ item }: CardProps) => {
   const [modalVisible, setModalVisible] = useState(false);
-  const { name, status, species, gender, origin } = item;
-  const characterInfo = { name, status, species, gender, origin };
+
+  const isCharacter = (i: any): i is Character =>
+    "status" in i && "species" in i && "gender" in i && "origin" in i;
+  const isLocation = (i: any): i is Location =>
+    "dimension" in i && "type" in i && !("episode" in i);
+  const isEpisode = (i: any): i is Episode => "air_date" in i && "episode" in i;
+
+  let info: Record<string, any> = {};
+  let image: string | undefined;
+  if (isCharacter(item)) {
+    const { name, status, species, gender, origin } = item;
+    info = { name, status, species, gender, origin };
+    image = item.image;
+  } else if (isLocation(item)) {
+    const { name, dimension, type } = item;
+    info = { name, dimension, type };
+  } else if (isEpisode(item)) {
+    const { name, air_date, episode } = item;
+    info = { name, air_date, episode };
+  }
   return (
     <>
       <Pressable
@@ -14,8 +36,10 @@ const CharactedCard = ({ item }: { item: Character }) => {
           setModalVisible(true);
         }}
       >
-        <Image source={{ uri: item.image }} style={styles.image} />
+        {image && <Image source={{ uri: image }} style={styles.image} />}
         <Text style={styles.text}>{item.name}</Text>
+        {isLocation(item) && <Text style={styles.text}>{item.dimension}</Text>}
+        {isEpisode(item) && <Text style={styles.text}>{item.episode}</Text>}
       </Pressable>
       <Modal
         animationType="slide"
@@ -26,8 +50,8 @@ const CharactedCard = ({ item }: { item: Character }) => {
       >
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
-            <Image source={{ uri: item.image }} style={styles.image} />
-            <ExtraInfo info={characterInfo} />
+            {image && <Image source={{ uri: image }} style={styles.image} />}
+            <ExtraInfo info={info} />
             <View style={styles.buttonContainer}>
               <Pressable
                 style={styles.button}
@@ -46,7 +70,7 @@ const CharactedCard = ({ item }: { item: Character }) => {
   );
 };
 
-export default CharactedCard;
+export default Card;
 
 const styles = StyleSheet.create({
   container: {
